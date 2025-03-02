@@ -44,7 +44,7 @@ const QuestionCard = ({ question, onAnswer, submitGuess, isLoading }) => {
           margin: "auto"
         }}
       >
-        {question?.options.map((option, index) => (
+        {question?.options?.map((option, index) => (
           <button
             key={index}
             className={`p-2 border rounded-lg text-lg hover:bg-gray-200 transition-all duration-200 
