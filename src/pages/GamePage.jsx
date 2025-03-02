@@ -1,3 +1,4 @@
+// Importing necessary modules and components
 import React, { useEffect, useState } from "react";
 import QuestionCard from "../components/QuestionCard";
 import Feedback from "../components/Feedback";
@@ -6,13 +7,17 @@ import ChallengeFriend from "../components/ChallengeFriend";
 import { BASE_URL } from "../endpoint";
 import axios from "axios";
 
-const GamePage = ({ scoreData,setUserName,friendName ,setFriendName}) => {
+// GamePage component
+const GamePage = ({ scoreData, setUserName, friendName, setFriendName }) => {
+  // State variables to manage the game state
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [funFact, setFunFact] = useState("");
   const [score, setScore] = useState({ correct: 0, wrong: 0 });
   const [question, setQuestion] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Function to handle the answer submission
   const handleAnswer = (correct, fact) => {
     setIsCorrect(correct);
     setFunFact(fact);
@@ -23,66 +28,70 @@ const GamePage = ({ scoreData,setUserName,friendName ,setFriendName}) => {
     });
   };
 
-  const handleNext =async () => {
+  // Function to fetch the next question
+  const handleNext = async () => {
     setShowFeedback(false);
-    setIsLoading(true)
-    await  axios.get(`${BASE_URL}/destination/random`)
+    setIsLoading(true);
+    await axios.get(`${BASE_URL}/destination/random`)
       .then(response => setQuestion(response.data))
-          .catch(error => console.error("Error fetching question:", error));
-   setIsLoading(false)
+      .catch(error => console.error("Error fetching question:", error));
+    setIsLoading(false);
   };
 
+  // Function to submit the user's guess
   const submitGuess = async (id, answer) => {
-    const body_obj = { id, user_guess:answer,username:scoreData?.username };
-     setIsLoading(true)
+    const body_obj = { id, user_guess: answer, username: scoreData?.username };
+    setIsLoading(true);
     try {
-          await axios.post(`${BASE_URL}/destination/submit-guess`, body_obj)
-            .then(response => {
-              setUserName({ ...response?.data, username: scoreData?.username })
-if (response?.data?.is_guess_right) {
-        setIsCorrect(true)
-      } else {
-        setIsCorrect(false)
-      }
-      setIsLoading(false)
-      return response.data;
-            })
-            .catch(error => setIsLoading(false));
+      await axios.post(`${BASE_URL}/destination/submit-guess`, body_obj)
+        .then(response => {
+          setUserName({ ...response?.data, username: scoreData?.username });
+          if (response?.data?.is_guess_right) {
+            setIsCorrect(true);
+          } else {
+            setIsCorrect(false);
+          }
+          setIsLoading(false);
+          return response.data;
+        })
+        .catch(error => setIsLoading(false));
     } catch (error) {
-      setIsLoading(false)
+      setIsLoading(false);
       console.error("Error submitting guess:", error);
     }
   };
 
+  // Fetching the initial question when the component mounts
   useEffect(() => {
     axios.get(`${BASE_URL}/destination/random`)
-    
       .then(response => {
         setQuestion(response.data);
-      setFriendName("")})
+        setFriendName("");
+      })
       .catch(error => console.error("Error fetching question:", error));
   }, []);
 
   return (
     <div className="flex flex-col items-center p-6"
-    style={{
-      border: "2px solid green",
-      width: "800px",
-      height: "600px",
-      margin: "auto",
-      marginTop: "2%",
-      backgroundColor: "yellow",
-      color:"black"
-    }}>
+      style={{
+        border: "2px solid green",
+        width: "800px",
+        height: "600px",
+        margin: "auto",
+        marginTop: "2%",
+        backgroundColor: "yellow",
+        color: "black"
+      }}>
       <Scoreboard score={score} scoreData={scoreData} />
       {!showFeedback ? (
         <QuestionCard onAnswer={handleAnswer} question={question} submitGuess={submitGuess} scoreData={scoreData} isLoading={isLoading} />
       ) : (
-          <Feedback isCorrect={isCorrect} funFact={scoreData?.fun_fact} isLoading={isLoading} onNext={handleNext} scoreData={scoreData} />
+        <Feedback isCorrect={isCorrect} funFact={scoreData?.fun_fact} isLoading={isLoading} onNext={handleNext} scoreData={scoreData} />
       )}
-     {!isLoading && <ChallengeFriend friendName={friendName} setFriendName={setFriendName}  />}
+      {!isLoading && <ChallengeFriend friendName={friendName} setFriendName={setFriendName} />}
     </div>
   );
 };
 
+// Exporting the GamePage component as the default export
 export default GamePage;

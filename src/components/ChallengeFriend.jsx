@@ -1,14 +1,20 @@
+// Importing necessary modules and components
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const ChallengeFriend = ({ friendName,setFriendName }) => {
+// ChallengeFriend component
+const ChallengeFriend = ({ friendName, setFriendName }) => {
+  // Generating the invite link
   const inviteLink = `${window.location.origin}/challenge?user=${friendName}`;
   const navigate = useNavigate();
+
+  // Function to copy the invite link to the clipboard
   const copyToClipboard = () => {
     navigator.clipboard.writeText(inviteLink);
     alert("Challenge link copied!");
   };
 
+  // Function to navigate to the challenge page with the friend's name
   const inviteFriend = (e) => {
     navigate(`/challenge?friendName=${friendName}`);
   };
@@ -19,9 +25,8 @@ const ChallengeFriend = ({ friendName,setFriendName }) => {
         width: "50%",
         margin: "auto",
         padding: "20px",
-        marginTop:"10px"
-        
-    }}
+        marginTop: "10px"
+      }}
     >
       <h2 className="text-xl font-semibold">Challenge a Friend</h2>
       <p className="text-sm text-gray-600">Invite your friend to play:</p>
@@ -29,8 +34,8 @@ const ChallengeFriend = ({ friendName,setFriendName }) => {
         type="text"
         value={friendName}
         onChange={(e) => {
-          console.log("e",e)
-          setFriendName(e?.target?.value)
+          console.log("e", e);
+          setFriendName(e?.target?.value);
         }}
         className="border p-2 w-full my-2 text-center"
       />
@@ -44,4 +49,5 @@ const ChallengeFriend = ({ friendName,setFriendName }) => {
   );
 };
 
+// Exporting the ChallengeFriend component as the default export
 export default ChallengeFriend;
